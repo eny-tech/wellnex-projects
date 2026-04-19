@@ -17,6 +17,7 @@ frontmatter contract.
 | Project | Status | Owner |
 |---------|--------|-------|
 | [remediation-agent](remediation-agent/README.md) | Active — design (Phase 0) | TBD |
+| [decision-rules-platform](decision-rules-platform/README.md) | Active — Phases 1 + 1.5 shipped | TBD |
 
 ## Adding a project
 
