@@ -1,0 +1,47 @@
+{
+	"folders": [
+		{
+			"name": "📋 wellnex-projects",
+			"path": "."
+		},
+		{
+			"name": "📖 wellnex-docs",
+			"path": "../wellnex-docs"
+		},
+		{
+			"name": "🩺 wellnex",
+			"path": "../wellnex"
+		},
+		{
+			"name": "🛠️ wellnex-server",
+			"path": "../wellnex-server"
+		},
+		{
+			"name": "🧠 wellnex-health-agents",
+			"path": "../wellnex-health-agents"
+		},
+		{
+			"name": "🤖 wellnex-agents",
+			"path": "../wellnex-agents"
+		}
+	],
+	"settings": {
+		"editor.wordWrap": "on",
+		"editor.rulers": [80],
+		"search.exclude": {
+			"**/node_modules": true,
+			"**/dist": true,
+			"**/.git": true
+		},
+		"github.copilot.chat.codeGeneration.useInstructionFiles": true,
+		"chat.useAgentsMdFile": true,
+		"chat.useNestedAgentsMdFiles": true
+	},
+	"extensions": {
+		"recommendations": [
+			"yzhang.markdown-all-in-one",
+			"davidanson.vscode-markdownlint",
+			"redhat.vscode-yaml"
+		]
+	}
+}

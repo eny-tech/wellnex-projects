@@ -1,0 +1,68 @@
+# Repository: wellnex-projects
+# Path: .item-flow/overlay.yaml
+# Purpose: Item-flow overlay mapping canonical lifecycle stages to wellnex-projects folders
+# Author: GitHub Copilot (Claude Opus 4.7)
+# Created: 2026-04-18
+# Last-Modified: 2026-04-18
+# Version: 0.1.0
+
+schema_version: 1
+repo: wellnex-projects
+canonical_root: /home/vscode/workspaces/wellnex-projects
+
+# wellnex-projects owns the idea / issue / project / resolved / archived
+# stages. The planning stage lives in wellnex-docs and is referenced via
+# cross_repo_stages below so the agent CLI can still resolve it.
+stages:
+  idea:
+    paths:
+      - ideas
+      - ideas/inbox
+  issue:
+    paths:
+      - issues
+  project:
+    paths:
+      - projects
+      - projects/active
+      - projects/recent
+  resolved:
+    paths:
+      - projects/resolved
+  archived:
+    paths:
+      - projects/parked
+      - archive
+
+cross_repo_stages:
+  planning:
+    repo: wellnex-docs
+    canonical_root: /home/vscode/workspaces/wellnex-docs
+    paths:
+      - planning
+  workflow:
+    repo: wellnex-agents
+    canonical_root: /home/vscode/workspaces/wellnex-agents
+    paths:
+      - .github/workflows
+
+pointer_policy:
+  mode: markdown_stub
+  leave_pointer_on_move: true
+
+transitions:
+  - { from: idea,     to: issue }
+  - { from: idea,     to: planning }
+  - { from: idea,     to: project }
+  - { from: issue,    to: planning }
+  - { from: issue,    to: project }
+  - { from: planning, to: project }
+  - { from: project,  to: workflow }
+  - { from: project,  to: resolved }
+  - { from: resolved, to: archived }
+
+github:
+  owner: eny-tech
+  repo: wellnex-projects
+  issue_label_prefix: wnif/
+  project_number: null

@@ -1,0 +1,7 @@
+# macOS / editor cruft
+.DS_Store
+*.swp
+*~
+
+# Generated registry indexes (the agent CLI rebuilds these)
+.item-flow/registry/
