@@ -43,7 +43,7 @@ Version: 0.1.0
 | Field | Value |
 |-------|-------|
 | Item ID | `wnif-01KPK0DRZ4QY8N2VDR0Z4M3W11` |
-| Status | Active — Phase 1 + 1.5 shipped |
+| Status | Active — Phases 1, 1.5, 2, 4.5 shipped |
 | Stage | project (idea + issue + planning all skipped) |
 | Captured | 2026-04-19 (session `7fbada70`) |
 | Owner | TBD |
@@ -149,15 +149,21 @@ into the Rule Evaluator sub-agent — not to grow the registry schema.
       and [patterns.md §14](https://github.com/eny-tech/wellnex-docs/blob/main/architecture/patterns.md#14-decision-rules-registry-wellnex-custom)
       with the disperser mapping.
 
-### Phase 2 — Validation tooling
+### Phase 2 — Validation tooling (shipped 2026-04-19)
 
-- [ ] Python validator in `wellnex-agents` that checks:
+- [x] Python validator in `wellnex-agents`
+      ([`src/wellnex_agents/decision_rules/validator.py`](https://github.com/eny-tech/wellnex-agents/blob/main/src/wellnex_agents/decision_rules/validator.py))
+      that checks:
       - Filename slots match frontmatter.
       - `evidence_required` non-empty.
       - `evaluation` ∈ {`simple`, `complex`}.
       - `item_id` unique across registry, matches `wnif-<ULID>` shape.
       - `origin_observation` fully populated; `dispersion` sequence monotonic.
       - README index row exists for every file.
+- [x] CLI surface: `wellnex-agents decision-rules validate
+      --registry <path>` (exits non-zero on errors).
+- [x] Test coverage: 16 unit tests including a smoke test against the
+      real registry.
 - [ ] GitHub Action wired to PRs touching `decision-rules/`.
 
 ### Phase 3 — Runtime evaluator (`simple`) and applications log
