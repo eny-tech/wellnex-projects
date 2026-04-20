@@ -30,8 +30,8 @@ Path: projects/active/cloud-governance/README.md
 Purpose: Long-running project that owns WellNex platform governance (naming, tagging, policy, drift, cost)
 Author: GitHub Copilot (Claude Opus 4.7) with operator
 Created: 2026-04-20
-Last-Modified: 2026-04-20
-Version: 0.1.0
+Last-Modified: 2026-04-19
+Version: 0.2.0
 -->
 
 # Cloud Governance
@@ -50,7 +50,7 @@ Version: 0.1.0
 | Owner | TBD |
 | Standards home | [wellnex-docs/governance/](https://github.com/eny-tech/wellnex-docs/blob/main/governance/README.md) |
 | Naming overlay | [wellnex-docs/governance/naming-overlays/wellnex.json](https://github.com/eny-tech/wellnex-docs/blob/main/governance/naming-overlays/wellnex.json) |
-| Generator | [SanMar `azure-naming` Function App](https://github.com/sanmar/azure-naming) |
+| Generator | [`cloud-naming` Function App](https://github.com/eny-tech/cloud-naming) (repo bootstrap pending — see [migration plan](plans/2026-04-19-cloud-naming-migration.md)) |
 
 ## Mission
 
@@ -71,7 +71,7 @@ graph LR
   D[New resource type] --> A
   E[Policy / cost change] --> A
   A --> F[wellnex.json overlay]
-  F --> G[azure-naming Function App]
+  F --> G[cloud-naming Function App]
 ```
 
 Every loop has an owner, a cadence, and an artifact. Without a
@@ -83,7 +83,7 @@ In:
 
 - Cloud resource **naming** standard ([governance/cloud-resource-naming.md](https://github.com/eny-tech/wellnex-docs/blob/main/governance/cloud-resource-naming.md))
 - Cloud resource **tagging** standard ([governance/cloud-resource-tagging.md](https://github.com/eny-tech/wellnex-docs/blob/main/governance/cloud-resource-tagging.md))
-- The **`wellnex.json`** rule overlay consumed by `azure-naming`
+- The **`wellnex.json`** rule overlay consumed by `cloud-naming`
 - **Azure Policy** assignments that enforce the above (initial
   effect `Audit`, hardening to `Deny`)
 - **Drift reporting** — what is in Azure that does not parse the
@@ -119,23 +119,47 @@ Out:
 
 Done:
 
-- [x] Naming standard v1.2.0 published
+- [x] Naming standard v1.2.0 published (de-duplicated 2026-04-19 → v1.2.1)
 - [x] Tagging standard v1.1.0 published
 - [x] Governance index README published
 - [x] `wellnex.json` overlay published, JSON-validated, ready to
-      drop into `azure-naming/rules/`
+      drop into `cloud-naming/rules/`
 - [x] `wellnex-docs/README.md` index updated with Governance section
 - [x] This project README created and linked
+- [x] **2026-04-19** — IaC home decision recorded
+      ([decisions/2026-04-19-iac-home.md](decisions/2026-04-19-iac-home.md))
+- [x] **2026-04-19** — Azure deploy bootstrap plan written
+      ([plans/2026-04-19-azure-deploy-bootstrap.md](plans/2026-04-19-azure-deploy-bootstrap.md))
+- [x] **2026-04-19** — `cloud-naming` migration plan written
+      ([plans/2026-04-19-cloud-naming-migration.md](plans/2026-04-19-cloud-naming-migration.md))
+- [x] **2026-04-19** — Vendor-neutralized governance docs (renamed
+      `azure-naming`/SanMar references to `cloud-naming` in
+      `wellnex-docs/governance/`)
 
-## Phase 1 — adoption (next)
+## Phase 1 — adoption (in flight, blocked on operator wait-states)
 
-- [ ] PR `wellnex.json` into the `azure-naming` repo `rules/`
-      directory (priority `200`).
-- [ ] Refactor `wellnex-server/infra/azure/main.tf` `locals` to
-      derive names from the overlay template (or call the
-      `azure-naming` API once available to WellNex).
-- [ ] Apply the same refactor to any future WellNex IaC modules.
-- [ ] Backfill required tags in existing dev / test resources.
+Wait-states (operator-owned):
+
+- [ ] `eny-tech/wellnex-infra` repo created
+- [ ] `eny-tech/cloud-naming` repo created
+- [ ] Azure subscription provisioned + `az login` available in
+      devcontainer (or service-principal creds)
+
+Work that unblocks once those land:
+
+- [ ] Push `wellnex-infra` skeleton (per [bootstrap plan §2](plans/2026-04-19-azure-deploy-bootstrap.md#2-repository-skeleton))
+- [ ] Apply `wellnex-infra/bootstrap/` — create state SA + GH OIDC
+      (per [bootstrap plan §3](plans/2026-04-19-azure-deploy-bootstrap.md#3-bootstrap-order))
+- [ ] Migrate `azure-naming` source into `eny-tech/cloud-naming`
+      (per [migration plan §6](plans/2026-04-19-cloud-naming-migration.md#6-migration-steps))
+- [ ] First `envs/tst/` apply via Actions; resources born conformant
+      to v1.2.1
+- [ ] Cutover — remove `wellnex-server/infra/azure/`, replace with
+      pointer README
+- [ ] PR `wellnex.json` into `cloud-naming/rules/` (or wire the
+      function to fetch it from `wellnex-docs` — decision in
+      [migration plan §8](plans/2026-04-19-cloud-naming-migration.md#8-open-questions))
+- [ ] Backfill required tags on any pre-cutover resources
 
 ## Phase 2 — enforcement
 
@@ -166,6 +190,42 @@ Done:
 ## Decision log
 
 Decisions about the standards are kept here and grow over time.
+
+### 2026-04-19 — IaC lives in a new `wellnex-infra` repo
+
+Full record: [decisions/2026-04-19-iac-home.md](decisions/2026-04-19-iac-home.md).
+
+- The current `wellnex-server/infra/azure/` provisions resources for
+  every WellNex system, not just the API. It was always misplaced.
+- The naming standard already names `system=iac` as a peer of the
+  application systems; physical layout will follow.
+- Bootstrap (state SA + GH OIDC), per-env compositions, and reusable
+  modules don't fit under any application repo.
+- Created decision and plan artifacts; execution waits on operator
+  creating the repo and on Azure subscription availability.
+
+### 2026-04-19 — `azure-naming` migrates to vendor-neutral `cloud-naming`
+
+Full record: [plans/2026-04-19-cloud-naming-migration.md](plans/2026-04-19-cloud-naming-migration.md).
+
+- Generator service moves from the operator's prior SanMar-internal
+  implementation into a clean, MIT-licensed, OSS-ready repository at
+  `eny-tech/cloud-naming`.
+- Vendor identifiers stripped from base config and field names
+  (`require_sanmar_prefix` → `require_org_prefix`); regional
+  overlays kept; vendor overlays moved into per-consumer files.
+- WellNex consumes the function via
+  `wellnex-infra/modules/naming/`; HCL fallback is mandatory and
+  must produce identical names to the API.
+- Governance docs (this session) already updated to reference
+  `cloud-naming` instead of SanMar.
+
+### 2026-04-19 — De-duplicated `cloud-resource-naming.md`
+
+The v1.2.0 commit had appended new content instead of replacing,
+leaving a 410-line zombie copy of v1.1.0 at the bottom of the file.
+Truncated to single-version source. Bumped to v1.2.1 (no normative
+changes; cleanup + reference renames only).
 
 ### 2026-04-20 — Naming v1.2.0 published
 
@@ -200,6 +260,7 @@ Decisions about the standards are kept here and grow over time.
 ## Related
 
 - Standards: [wellnex-docs/governance/](https://github.com/eny-tech/wellnex-docs/blob/main/governance/README.md)
-- Generator service: [SanMar `azure-naming`](https://github.com/sanmar/azure-naming)
+- Generator service: [`cloud-naming`](https://github.com/eny-tech/cloud-naming) (repo bootstrap pending; see [migration plan](plans/2026-04-19-cloud-naming-migration.md))
+- IaC home: [`wellnex-infra`](https://github.com/eny-tech/wellnex-infra) (repo bootstrap pending; see [decision](decisions/2026-04-19-iac-home.md) and [bootstrap plan](plans/2026-04-19-azure-deploy-bootstrap.md))
 - Sister project (auto-flagging drift): [remediation-agent](../remediation-agent/README.md)
-- WellNex IaC consumer (today): [wellnex-server/infra/azure/](https://github.com/eny-tech/wellnex-server/tree/main/infra/azure)
+- WellNex IaC consumer (today, pre-cutover): [wellnex-server/infra/azure/](https://github.com/eny-tech/wellnex-server/tree/main/infra/azure)
