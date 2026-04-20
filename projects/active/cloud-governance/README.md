@@ -119,8 +119,8 @@ Out:
 
 Done:
 
-- [x] Naming standard v1.0.0 published
-- [x] Tagging standard v1.0.0 published
+- [x] Naming standard v1.2.0 published
+- [x] Tagging standard v1.1.0 published
 - [x] Governance index README published
 - [x] `wellnex.json` overlay published, JSON-validated, ready to
       drop into `azure-naming/rules/`
@@ -167,23 +167,35 @@ Done:
 
 Decisions about the standards are kept here and grow over time.
 
-### 2026-04-20 — Naming v1.0.0 published
+### 2026-04-20 — Naming v1.2.0 published
 
 - Adopted CAF abbreviations as the authoritative `slug` source.
-- Fixed `org=wn`. Reserved against confusion with sibling tenants
+- Fixed `org=wnx`. Reserved against confusion with sibling tenants
   (e.g. SanMar `sm`).
-- Eight `app` codes (`web`, `api`, `agt`, `obs`, `data`, `sec`,
-  `core`, `iac`).
+- Eight `system` codes (`web`, `api`, `agents`, `obs`, `data`,
+  `sec`, `core`, `iac`); free-form `subsystem` (`[a-z0-9]{2,8}`)
+  for sub-components within a system.
 - Five `env` codes (`prd`, `stg`, `tst`, `dev`, `sbx`).
-- Two templates only: standard (with `-`) and compact (no `-`,
-  with optional `random5` for global-uniqueness resources).
+- Segment order: `slug-org-region-env-system-[subsystem]-instance`.
+  `slug` is first so portal alphabetical sort groups by resource
+  type; remaining segments run **broad to narrow** within each
+  type bucket.
+- Two templates only: long (with `-`) and short (no `-`, with
+  optional `random5` for global-uniqueness resources).
 - Personal identifiers explicitly forbidden from names; owner goes
   to `wellnex.owner` tag.
+- Earlier internal drafts (v1.0.0 with `org=wn` and `app` slug;
+  v1.1.0 with `org`-first ordering) were never deployed; v1.2.0 is
+  the first published ordering.
 
-### 2026-04-20 — Tagging v1.0.0 published
+### 2026-04-20 — Tagging v1.1.0 published
 
-- Seven required tags, four optional. Required-tag enforcement starts
-  at `Audit` and hardens to `Deny` after Phase 2 drift hits zero.
+- Eight required tags (`wellnex.system`, `wellnex.subsystem`,
+  `wellnex.env`, `wellnex.owner`, `wellnex.cost_center`,
+  `wellnex.repo`, `wellnex.managed_by`,
+  `wellnex.data_classification`) and four optional. Required-tag
+  enforcement starts at `Audit` and hardens to `Deny` after Phase
+  2 drift hits zero.
 
 ## Related
 
