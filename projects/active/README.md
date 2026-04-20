@@ -4,8 +4,8 @@ Path: projects/active/README.md
 Purpose: Status view for projects currently driving work
 Author: GitHub Copilot (Claude Opus 4.7)
 Created: 2026-04-18
-Last-Modified: 2026-04-18
-Version: 1.0.0
+Last-Modified: 2026-04-20
+Version: 1.1.0
 -->
 
 # Active Projects
@@ -18,6 +18,7 @@ frontmatter contract.
 |---------|--------|-------|
 | [remediation-agent](remediation-agent/README.md) | Active — design (Phase 0) | TBD |
 | [decision-rules-platform](decision-rules-platform/README.md) | Active — Phases 1 + 1.5 shipped | TBD |
+| [cloud-governance](cloud-governance/README.md) | Active — Phase 0 (standards bootstrapped) | TBD |
 
 ## Adding a project
 
